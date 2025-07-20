@@ -1,0 +1,141 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">Prediction Results</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card mb-3 h-100">
+                            <div class="card-header bg-info text-white">
+                                KNN Model
+                            </div>
+                            <div class="card-body text-center">
+                                <h4 class="mb-3">
+                                    {% if predictions.knn.prediction == 1 %}
+                                    <span class="badge bg-danger">Cancer</span>
+                                    {% else %}
+                                    <span class="badge bg-success">No Cancer</span>
+                                    {% endif %}
+                                </h4>
+                                <div class="progress mb-3">
+                                    <div class="progress-bar {% if predictions.knn.prediction == 1 %}bg-danger{% else %}bg-success{% endif %}"
+                                         role="progressbar"
+                                         style="width: {{ predictions.knn.probability * 100 }}%"
+                                         aria-valuenow="{{ predictions.knn.probability * 100 }}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                        {{ predictions.knn.probability_percent }}
+                                    </div>
+                                </div>
+                                <p class="card-text">Confidence: {{ predictions.knn.probability_percent }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card mb-3 h-100">
+                            <div class="card-header bg-info text-white">
+                                Naive Bayes Model
+                            </div>
+                            <div class="card-body text-center">
+                                <h4 class="mb-3">
+                                    {% if predictions.nb.prediction == 1 %}
+                                    <span class="badge bg-danger">Cancer</span>
+                                    {% else %}
+                                    <span class="badge bg-success">No Cancer</span>
+                                    {% endif %}
+                                </h4>
+                                <div class="progress mb-3">
+                                    <div class="progress-bar {% if predictions.nb.prediction == 1 %}bg-danger{% else %}bg-success{% endif %}"
+                                         role="progressbar"
+                                         style="width:{{ predictions.nb.probability * 100 }}%"
+                                         aria-valuenow="{{ predictions.nb.probability * 100 }}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                        {{ predictions.nb.probability_percent }}
+                                    </div>
+                                </div>
+                                <p class="card-text">Confidence: {{ predictions.nb.probability_percent }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="card mb-3 h-100">
+                            <div class="card-header bg-primary text-white">
+                                Ensemble Model
+                            </div>
+                            <div class="card-body text-center">
+                                <h4 class="mb-3">
+                                    {% if predictions.ensemble.prediction == 1 %}
+                                    <span class="badge bg-danger">Cancer</span>
+                                    {% else %}
+                                    <span class="badge bg-success">No Cancer</span>
+                                    {% endif %}
+                                </h4>
+                                <div class="progress mb-3">
+                                    <div class="progress-bar {% if predictions.ensemble.prediction == 1 %}bg-danger{% else %}bg-success{% endif %}"
+                                         role="progressbar"
+                                         style="width: {{ predictions.ensemble.probability * 100 }}%"
+                                         aria-valuenow="{{ predictions.ensemble.probability * 100 }}"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100">
+                                        {{ predictions.ensemble.probability_percent }}
+                                    </div>
+                                </div>
+                                <p class="card-text">Confidence: {{ predictions.ensemble.probability_percent }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-info mt-4">
+                    <h5>Interpretation</h5>
+                    <p>
+                        {% if predictions.ensemble.prediction == 1 %}
+                            The models predict a <strong>{{ predictions.ensemble.probability_percent }}</strong> probability of colorectal cancer.
+                            {% if predictions.ensemble.probability > 0.8 %}
+                                <strong>High risk detected.</strong> This patient shows strong indicators of colorectal cancer.
+                            {% elif predictions.ensemble.probability > 0.6 %}
+                                <strong>Moderate to high risk detected.</strong> Multiple risk factors are present.
+                            {% else %}
+                                <strong>Moderate risk detected.</strong> Some risk factors are present.
+                            {% endif %}
+                        {% else %}
+                            The models predict a <strong>{{ (1-predictions.ensemble.probability)*100|round(1) }}%</strong> probability of no colorectal cancer.
+                            {% if predictions.ensemble.probability < 0.2 %}
+                                <strong>Low risk detected.</strong> This patient shows few indicators of colorectal cancer.
+                            {% else %}
+                                <strong>Low to moderate risk detected.</strong> Some protective factors are present.
+                            {% endif %}
+                        {% endif %}
+                    </p>
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-header bg-secondary text-white">
+                        Patient Data
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% for key, value in patient_data.items() %}
+                            <div class="col-md-4 mb-2">
+                                <strong>{{ key }}:</strong> {{ value }}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('index') }}" class="btn btn-secondary">Make Another Prediction</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

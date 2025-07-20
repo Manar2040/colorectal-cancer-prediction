@@ -1,0 +1,112 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h3 class="card-title mb-0">Patient Information</h3>
+            </div>
+            <div class="card-body">
+                <form action="{{ url_for('predict') }}" method="post">
+                    <div class="row">
+                        <!-- Categorical features with dropdowns -->
+                        {% if 'Gender' in categorical_options %}
+                        <div class="col-md-6 mb-3">
+                            <label for="Gender" class="form-label">Gender</label>
+                            <select class="form-select" id="Gender" name="Gender" required>
+                                <option value="" disabled selected>Select Gender</option>
+                                {% for option in categorical_options['Gender'] %}
+                                <option value="{{ option }}">{{ option }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% endif %}
+
+                        {% if 'Location' in categorical_options %}
+                        <div class="col-md-6 mb-3">
+                            <label for="Location" class="form-label">Location</label>
+                            <select class="form-select" id="Location" name="Location" required>
+                                <option value="" disabled selected>Select Location</option>
+                                {% for option in categorical_options['Location'] %}
+                                <option value="{{ option }}">{{ option }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% endif %}
+
+                        {% if 'Dukes Stage' in categorical_options %}
+                        <div class="col-md-6 mb-3">
+                            <label for="Dukes Stage" class="form-label">Dukes Stage</label>
+                            <select class="form-select" id="Dukes Stage" name="Dukes Stage" required>
+                                <option value="" disabled selected>Select Dukes Stage</option>
+                                {% for option in categorical_options['Dukes Stage'] %}
+                                <option value="{{ option }}">{{ option }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        {% endif %}
+
+                        <!-- Numerical features -->
+                        {% if 'Age (in years)' in features %}
+                        <div class="col-md-6 mb-3">
+                            <label for="Age (in years)" class="form-label">Age (in years)</label>
+                            <input type="number" class="form-control" id="Age (in years)" name="Age (in years)" min="0" max="120" required>
+                        </div>
+                        {% endif %}
+
+                        {% if 'DFS (in months)' in features %}
+                        <div class="col-md-6 mb-3">
+                            <label for="DFS (in months)" class="form-label">DFS (in months)</label>
+                            <input type="number" class="form-control" id="DFS (in months)" name="DFS (in months)" min="0" required>
+                        </div>
+                        {% endif %}
+
+                        {% if 'Adj_Radio' in features %}
+                        <div class="col-md-6 mb-3">
+                            <label for="Adj_Radio" class="form-label">Adjuvant Radiotherapy</label>
+                            <select class="form-select" id="Adj_Radio" name="Adj_Radio" required>
+                                <option value="" disabled selected>Select Option</option>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                        {% endif %}
+
+                        {% if 'Adj_Chem' in features %}
+                        <div class="col-md-6 mb-3">
+                            <label for="Adj_Chem" class="form-label">Adjuvant Chemotherapy</label>
+                            <select class="form-select" id="Adj_Chem" name="Adj_Chem" required>
+                                <option value="" disabled selected>Select Option</option>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                        {% endif %}
+
+                        <!-- Add other numerical features dynamically -->
+                        {% for feature in features %}
+                            {% if feature not in ['Gender', 'Location', 'Dukes Stage', 'Age (in years)', 'DFS (in months)', 'Adj_Radio', 'Adj_Chem'] %}
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ feature }}" class="form-label">{{ feature }}</label>
+                                <input type="number" step="any" class="form-control" id="{{ feature }}" name="{{ feature }}" required>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-grid gap-2 mt-3">
+                        <button type="submit" class="btn btn-primary">Predict Cancer Risk</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer">
+                <div class="alert alert-warning mb-0">
+                    <strong>Disclaimer:</strong> This tool is for educational and research purposes only.
+                    It should not be used for actual medical diagnosis. Always consult with healthcare professionals.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
